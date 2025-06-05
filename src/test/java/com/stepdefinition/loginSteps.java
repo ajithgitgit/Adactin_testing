@@ -1,4 +1,6 @@
 package com.stepdefinition;
 
-public class stepdefiniiton {
+public class loginSteps {
+
+
 }
