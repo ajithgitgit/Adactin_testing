@@ -1,4 +1,5 @@
 package com.stepdefinition;
+import Baseclass.BaseFunctions;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -10,24 +11,28 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.support.ui.Select;
 
-public class loginSteps {
+public class loginSteps extends BaseFunctions {
 
     WebDriver driver;
 
+
     @Given("User launches the adactin hotel booking site")
     public void user_launches_the_adactin_hotel_booking_site() {
-        WebDriverManager.edgedriver().setup();
-        driver = new EdgeDriver();
-        driver.manage().window().maximize();
-        driver.get("https://adactinhotelapp.com");
+        BrowserLaunch("firefox");
+        openUrl("https://adactinhotelapp.com");
+
     }
     @When("User enters the login username {string} and password {string}")
     public void user_enters_the_login_username_and_password(String username, String password) {
-        driver.findElement(By.id("username")).sendKeys("Hussain54");
+        enterTheValue("//input[@id='username']","Hussain54");
+//        driver.findElement(By.id("username")).sendKeys("Hussain54");
+
+
         driver.findElement(By.id("password")).sendKeys("Hussain@65");
 
     }
     @When("User clicks the login button")
+
     public void user_clicks_the_login_button() {
         driver.findElement(By.id("login")).click();
 
@@ -52,13 +57,15 @@ public class loginSteps {
       WebElement Location = driver.findElement(By.id("location"));
         Select s1= new Select(Location);
         s1.selectByValue("Adelaide");
+        selectTheValue("xapth","text","Adelaide");
+
 
     }
     @When("User choose the Hotel")
     public void user_choose_the_hotel() {
         WebElement hotel = driver.findElement(By.id("hotels"));
         Select s2= new Select(hotel);
-        s2.selectByIndex(3);
+        s2.selectByIndex(3)
 
     }
     @When("User Select the type of room")
