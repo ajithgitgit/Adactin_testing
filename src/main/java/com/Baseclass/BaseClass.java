@@ -171,7 +171,7 @@ public class BaseClass {
         }
     }
 
-    // JS Click
+    // JS Click javascript
     public void jsClick(String xpath) {
         try {
             WebElement element = driver.findElement(By.xpath(xpath));
