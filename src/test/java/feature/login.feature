@@ -5,7 +5,7 @@ Feature: Login to Adactin
     When User enters the login username "username" and password "password"
     And User clicks the login button
     Then User Should be navigated to the Search Hotel page
-    When User choose and select the Location of Hotel
+    And User choose and select the Location of Hotel
     And User select the Hotel
     And User select the type of room and number of rooms
     And User choose the check in date and check out date
