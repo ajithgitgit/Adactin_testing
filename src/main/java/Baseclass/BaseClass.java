@@ -105,6 +105,7 @@ public class BaseClass {
                     break;
                 case "index":
                     select.selectByIndex(Integer.parseInt(value));
+                    break;
                 case "value":
                     select.selectByValue(value);
                     break;

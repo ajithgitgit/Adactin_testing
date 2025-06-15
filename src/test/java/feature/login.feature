@@ -11,4 +11,15 @@ Feature: Login to Adactin
     And User choose the check in date and check out date
     And User select the number of adults per room and children per room
     And User clicks the search button
-    Then User Should be navigated to the Booked Itinerary
+    Then user click the select and continue button to confirm the Hotel
+    And user navigated to Book A Hotel page
+    And user enters the First Name
+    And user enters the Last Name
+    And user enters the Billing Address
+    And user enters the Credit Card Number
+    And user selects the Credit Card type
+    And user selects the Expiry month and year
+    And User Enters the Cvv number
+    And user click the Book now button
+
+

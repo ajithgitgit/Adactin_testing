@@ -17,11 +17,12 @@ public class Search_hotel extends  BaseClass{
     private final String hotelName = "//select[@id='hotels']";
     private final String roomType = "//select[@id='room_type']";
     private final String numberOfRooms = "//select[@id='room_nos']";
-    private final String checkInDate = "//select[@id='datepick_in']";
-    private final String checkOutDate = "//select[@id='datepick_out']";
+    private final String checkInDate = "//input[@id='datepick_in']";
+    private final String checkOutDate = "//input[@id='datepick_out']";
     private final String adultsPerRoom = "//select[@id='adult_room']";
     private final String childrenPerRoom = "//select[@id='child_room']";
-    private final String searchButton = "//select[@id='Submit']";
+    private final String search_Button = "//input[@id='Submit']";
+
 
 
     //getters
@@ -58,8 +59,8 @@ public class Search_hotel extends  BaseClass{
         return driver.findElement(By.xpath(childrenPerRoom));
 
     }
-    public WebElement getSearchButton() {
-        return driver.findElement(By.xpath(searchButton));
+    public WebElement getSearch_Button() {
+        return driver.findElement(By.xpath(search_Button));
     }
 //    //setters
      public void  setHotelLocation(String Text) {
@@ -80,22 +81,22 @@ public class Search_hotel extends  BaseClass{
     }
     public void  setCheckInDate(String Text) {
         waitForVisibility(checkInDate, 10);
-        selectDropdown(checkInDate, "visible text", Text);
+        entertext(checkInDate,Text);
     }
     public void  setCheckOutDate(String Text) {
         waitForVisibility(checkOutDate, 10);
-        selectDropdown(checkOutDate, "value", Text);
+        entertext(checkOutDate,Text);
     }
     public void  setAdultsPerRoom(String Text) {
         waitForVisibility(adultsPerRoom, 10);
-        selectDropdown(adultsPerRoom, "visible text", Text);
+        selectDropdown(adultsPerRoom, "index", Text);
     }
     public void setChildrenPerRoom(String Text) {
         waitForVisibility(childrenPerRoom, 10);
-        selectDropdown(childrenPerRoom, "value", Text);
+        selectDropdown(childrenPerRoom, "index", Text);
     }
-    public void  SearchButton() {
-         getSearchButton().click();
+    public void setSearch_Button() {
+         getSearch_Button().click();
 
 
     }
