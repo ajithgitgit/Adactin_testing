@@ -1,5 +1,6 @@
 package com.stepdefinition;
 
+import Utils.ConfigReader;
 import com.Baseclass.BaseClass;
 import com.pageObjectModel.LoginPage;
 import com.pageObjectModel.SearchPage;
@@ -9,6 +10,7 @@ import io.cucumber.java.en.When;
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 
+
 public class loginSteps extends BaseClass {
 
     WebDriver driver;
@@ -17,8 +19,10 @@ public class loginSteps extends BaseClass {
 
     @Given("User launches the adactin hotel booking site")
     public void user_launches_the_adactin_hotel_booking_site() {
-        driver = launchBrowser("firefox");
-        openUrl("https://adactinhotelapp.com");
+        String browser = ConfigReader.get("browser");
+        driver = launchBrowser(browser);
+        String url = ConfigReader.get("url");
+        openUrl(url);
 
         searchPage = new SearchPage(driver);
         loginPage = new LoginPage(driver);
