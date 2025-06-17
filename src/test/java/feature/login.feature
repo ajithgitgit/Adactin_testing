@@ -21,5 +21,11 @@ Feature: Login to Adactin
     And user selects the Expiry month and year
     And User Enters the Cvv number
     And user click the Book now button
+    And user clicks my Itinerary Button
+    And user should be navigated to Booking itinerary Page
+    And user click check all radio button
+    And User clicks cancel selected button
+    And user confirms the  alert
+    And User click logout Button
 
 

@@ -6,7 +6,6 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -128,6 +127,33 @@ public class BaseClass {
       }
 
     }
+    public void handleAlert(boolean acceptAlert, String textToSend) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            wait.until(ExpectedConditions.alertIsPresent());
+
+            Alert alert = driver.switchTo().alert();
+
+            if (textToSend != null && !textToSend.isEmpty()) {
+                alert.sendKeys(textToSend);
+                alert.accept();  // Assuming you always want to accept after sending text
+            } else {
+                if (acceptAlert) {
+                    alert.accept();
+                } else {
+                    alert.dismiss();
+                }
+            }
+        } catch (NoAlertPresentException e) {
+            System.out.println("No alert present: " + e.getMessage());
+        } catch (UnhandledAlertException e) {
+            System.out.println("Unhandled alert issue: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Unexpected exception while handling alert: " + e.getMessage());
+        }
+    }
+
+
 
 
 

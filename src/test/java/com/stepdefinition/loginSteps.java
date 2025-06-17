@@ -1,12 +1,10 @@
 package com.stepdefinition;
 
 import Baseclass.BaseClass;
+import Utils.ConfigReader;
 import io.cucumber.java.en.*;
 import org.junit.Assert;
-import pageObjectModel.BookHotel;
-import pageObjectModel.LoginPage;
-import pageObjectModel.Search_hotel;
-import pageObjectModel.Select_Hotel;
+import pageObjectModel.*;
 
 public class loginSteps extends BaseClass {
 
@@ -14,15 +12,22 @@ public class loginSteps extends BaseClass {
     protected Search_hotel searchHotel;
     protected Select_Hotel select_hotel;
     protected BookHotel bookHotel;
+    protected Booking_Confirmation bookingConfirmation;
+    protected Booked_Itinerary bookedItinerary;
 
     @Given("User launches the adactin hotel booking site")
     public void user_launches_the_adactin_hotel_booking_site() {
-        BrowserLaunch("edge");
-        openUrl("https://adactinhotelapp.com");
+       String browser  = ConfigReader.get("browser");
+       driver = BrowserLaunch(browser);
+       String url = ConfigReader.get("url");
+       openUrl(url);
         searchHotel = new Search_hotel(driver);
         select_hotel = new Select_Hotel(driver);
         bookHotel = new BookHotel(driver);
         loginPage = new LoginPage(driver);
+        bookingConfirmation = new Booking_Confirmation(driver);
+        bookedItinerary = new Booked_Itinerary(driver);
+
     }
 
     @When("User enters the login username {string} and password {string}")
@@ -35,7 +40,6 @@ public class loginSteps extends BaseClass {
     public void user_clicks_the_login_button() {
         clickElement("//input[@id='login']");
         System.out.println("Login Button clicked successfully");
-        takeScreenshot("login");
     }
 
     @Then("User Should be navigated to the Search Hotel page")
@@ -112,10 +116,45 @@ public class loginSteps extends BaseClass {
         bookHotel.setCvv("123");
     }
     @Then("user click the Book now button")
-    public void user_click_the_book_now_button() {
+    public void user_click_the_book_now_button() throws InterruptedException {
        bookHotel.setBookNowButton();
     }
 
+
+    @And("user clicks my Itinerary Button")
+    public void userClicksMyItineraryButton() {
+        bookingConfirmation.setMy_Itinerary_Button();
+
+
+    }
+
+    @And("user should be navigated to Booking itinerary Page")
+    public void userShouldBeNavigatedToBookingItineraryPage() {
+        System.out.println(bookedItinerary.getTitle());
+
+    }
+
+    @And("user click check all radio button")
+    public void userClickCheckAllRadioButton() {
+        bookedItinerary.setCheck_All_Button();
+    }
+
+    @And("User clicks cancel selected button")
+    public void userClicksCancelSelectedButton() {
+        bookedItinerary.setCancel_Selected_Button();
+
+    }
+    @And("user confirms the  alert")
+    public void userConfirmsTheAlert() {
+        driver.switchTo().alert();
+        bookedItinerary.confirmAlert();
+    }
+
+    @And("User click logout Button")
+    public void userClickLogoutButton() {
+        bookedItinerary.setLogout_Button();
+        System.out.println(bookedItinerary.getTitle());
+    }
 
 
 }

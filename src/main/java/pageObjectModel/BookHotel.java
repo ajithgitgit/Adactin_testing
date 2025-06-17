@@ -93,9 +93,12 @@ public class BookHotel extends BaseClass {
         selectDropdown(expiryYear, "value", Text);
     }
     public void setCvv (String Text) {
-      entertext(cvv, Text);
+
+        entertext(cvv, Text);
     }
-    public void setBookNowButton() {
+    public void setBookNowButton() throws InterruptedException {
+
         clickElement(bookNowButton);
+        Thread.sleep(10000);
     }
 }
