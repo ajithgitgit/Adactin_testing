@@ -27,7 +27,7 @@ public class ExcelUtils {
         Sheet sheet = workbook.getSheet(sheetName);
         Row row = sheet.getRow(1);
 
-        String password1 = row.getCell(1).getStringCellValue();
+        String password1 = row.getCell(0).getStringCellValue();
         workbook.close();
         fis.close();
         return password1;

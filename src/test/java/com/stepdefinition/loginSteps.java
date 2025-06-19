@@ -35,9 +35,9 @@ public class loginSteps extends BaseClass {
     @When("User enters the login username {string} and password {string}")
     public void user_enters_the_login_username_and_password(String username, String password) throws Exception {
 
-        String username1 = ExcelUtils.getUserName("src/test/java/Utils/Test1.xlsx", "test1");
+        String username1 = ExcelUtils.getUserName("src/test/java/Utils/Test1.xlsx", "Sheet1");
         loginPage.enterUsername(username1);
-        String password1 = ExcelUtils.getPassword("src/test/java/Utils/Test1.xlsx", "test1");
+        String password1 = ExcelUtils.getPassword("src/test/java/Utils/Test1.xlsx", "Sheet1");
         loginPage.enterPassword(password1);
     }
 
