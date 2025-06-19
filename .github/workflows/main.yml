@@ -2,9 +2,9 @@ name: Run Adactin Test
 
 on:
   push:
-    branches: [ master ]
+    branches: [ Update_frame ]
   pull_request:
-    branches: [ master ]
+    branches: [ Update_frame ]
 
 jobs:
   test:
