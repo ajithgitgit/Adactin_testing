@@ -1,6 +1,7 @@
 package com.stepdefinition;
 
 import Utils.ConfigReader;
+import Utils.ExcelUtilis;
 import com.Baseclass.BaseClass;
 import com.pageObjectModel.LoginPage;
 import com.pageObjectModel.SearchPage;
@@ -29,9 +30,14 @@ public class loginSteps extends BaseClass {
     }
 
     @When("User enters the login username {string} and password {string}")
-    public void user_enters_the_login_username_and_password(String username, String password) {
-        loginPage.enterUsername("ajith976");   // dynamic values from feature file
-        loginPage.enterPassword("user1234");
+    public void user_enters_the_login_username_and_password(String username, String password) throws Exception {
+        String username1 = ExcelUtilis.getUserName("src/main/java/Utils/userdata.xlsx", "testdata");
+        loginPage.enterUsername(username1);
+        String password1 = ExcelUtilis.getPassword("src/main/java/Utils/userdata.xlsx", "testdata");
+        loginPage.enterPassword(password1);
+//
+//        loginPage.enterUsername("ajith976");   // dynamic values from feature file
+//        loginPage.enterPassword("user1234");
     }
 
     @When("User clicks the login button")
