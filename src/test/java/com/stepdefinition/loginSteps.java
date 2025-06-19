@@ -2,6 +2,7 @@ package com.stepdefinition;
 
 import Baseclass.BaseClass;
 import Utils.ConfigReader;
+import Utils.ExcelUtils;
 import io.cucumber.java.en.*;
 import org.junit.Assert;
 import pageObjectModel.*;
@@ -14,6 +15,7 @@ public class loginSteps extends BaseClass {
     protected BookHotel bookHotel;
     protected Booking_Confirmation bookingConfirmation;
     protected Booked_Itinerary bookedItinerary;
+
 
     @Given("User launches the adactin hotel booking site")
     public void user_launches_the_adactin_hotel_booking_site() {
@@ -31,9 +33,12 @@ public class loginSteps extends BaseClass {
     }
 
     @When("User enters the login username {string} and password {string}")
-    public void user_enters_the_login_username_and_password(String username, String password) {
-        entertext("//input[@id='username']", "Hussain54");
-        entertext("//input[@id='password']", "Hussain@65");
+    public void user_enters_the_login_username_and_password(String username, String password) throws Exception {
+
+        String username1 = ExcelUtils.getUserName("src/test/java/Utils/Test1.xlsx", "test1");
+        loginPage.enterUsername(username1);
+        String password1 = ExcelUtils.getPassword("src/test/java/Utils/Test1.xlsx", "test1");
+        loginPage.enterPassword(password1);
     }
 
     @When("User clicks the login button")
