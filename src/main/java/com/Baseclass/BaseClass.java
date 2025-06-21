@@ -4,7 +4,11 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.*;
 
@@ -18,59 +22,87 @@ public class BaseClass {
     public static WebDriver driver;
     public static WebDriverWait wait;
 
-    // Launch browser with implicit wait
-    public WebDriver launchBrowser(String browserType) {
+    // Launch browser with implicit wait and explicit wait initialization
+    public static WebDriver launchBrowser(String browserType) {
         try {
-            if (browserType.equalsIgnoreCase("chrome")) {
-                WebDriverManager.chromedriver().setup();
-                driver = new ChromeDriver();
-            } else if (browserType.equalsIgnoreCase("firefox")) {
-                WebDriverManager.firefoxdriver().setup();
-                driver = new FirefoxDriver();
-            } else {
-                throw new IllegalArgumentException("Invalid browser type");
+            switch (browserType.toLowerCase()) {
+                case "chrome": {
+                    WebDriverManager.chromedriver().setup();
+                    ChromeOptions options = new ChromeOptions();
+                    options.addArguments("--headless=new");   // Headless Chrome (Chrome 109+)
+                    options.addArguments("--disable-gpu");
+                    options.addArguments("--window-size=1920,1080");
+                    driver = new ChromeDriver(options);
+                    break;
+                }
+                case "firefox": {
+                    WebDriverManager.firefoxdriver().setup();
+                    FirefoxOptions options = new FirefoxOptions();
+                    options.addArguments("-headless");         // Headless Firefox
+                    driver = new FirefoxDriver(options);
+                    break;
+                }
+                case "edge": {
+                    WebDriverManager.edgedriver().setup();
+                    EdgeOptions options = new EdgeOptions();
+                    options.addArguments("--headless=new");   // Headless Edge (Edge 114+)
+                    options.addArguments("--disable-gpu");
+                    options.addArguments("--window-size=1920,1080");
+                    driver = new EdgeDriver(options);
+                    break;
+                }
+                default:
+                    throw new IllegalArgumentException("Invalid browser type: " + browserType);
             }
 
-            driver.manage().window().maximize();
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-            wait = new WebDriverWait(driver, Duration.ofSeconds(20)); // default explicit wait
+            driver.manage().window().maximize();
+            wait = new WebDriverWait(driver, Duration.ofSeconds(20)); // explicit wait
         } catch (Exception e) {
-            System.out.println("Browser launch failed: " + e.getMessage());
+            System.err.println("Browser launch failed: " + e.getMessage());
+            throw e;
         }
         return driver;
     }
 
     // Open URL
-    public void openUrl(String url) {
+    public static void openUrl(String url) {
         try {
             driver.get(url);
         } catch (Exception e) {
-            System.out.println("Failed to open URL: " + e.getMessage());
+            System.err.println("Failed to open URL: " + e.getMessage());
+            throw e;
         }
     }
 
-    // Enter text
+    // Enter text into element identified by xpath
     public void enterText(String xpath, String text) {
         try {
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
             element.clear();
             element.sendKeys(text);
+        } catch (TimeoutException e) {
+            System.err.println("Timeout waiting for element to enter text: " + xpath);
+            throw e;
         } catch (Exception e) {
-            System.out.println("Error entering text: " + e.getMessage());
+            System.err.println("Error entering text into element (" + xpath + "): " + e.getMessage());
         }
     }
 
-    // Click element
+    // Click element identified by xpath
     public void clickElement(String xpath) {
         try {
             WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
             element.click();
+        } catch (TimeoutException e) {
+            System.err.println("Timeout waiting for clickable element: " + xpath);
+            throw e;
         } catch (Exception e) {
-            System.out.println("Error clicking element: " + e.getMessage());
+            System.err.println("Error clicking element (" + xpath + "): " + e.getMessage());
         }
     }
 
-    // Dropdown selection
+    // Select dropdown by visible text, value or index
     public void selectDropdown(String xpath, String type, String value) {
         try {
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
@@ -87,37 +119,38 @@ public class BaseClass {
                     select.selectByIndex(Integer.parseInt(value));
                     break;
                 default:
-                    throw new IllegalArgumentException("Invalid select type: " + type);
+                    throw new IllegalArgumentException("Invalid dropdown select type: " + type);
             }
         } catch (Exception e) {
-            System.out.println("Dropdown selection failed: " + e.getMessage());
+            System.err.println("Dropdown selection failed (" + xpath + "): " + e.getMessage());
+            throw e;
         }
     }
 
-    // Mouse hover
+    // Mouse hover over element
     public void mouseHover(String xpath) {
         try {
             Actions actions = new Actions(driver);
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
             actions.moveToElement(element).perform();
         } catch (Exception e) {
-            System.out.println("Mouse hover failed: " + e.getMessage());
+            System.err.println("Mouse hover failed (" + xpath + "): " + e.getMessage());
         }
     }
 
-    // Drag and drop
+    // Drag and drop source element to target element
     public void dragAndDrop(String sourceXpath, String targetXpath) {
         try {
             Actions actions = new Actions(driver);
             WebElement source = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(sourceXpath)));
-            WebElement target = driver.findElement(By.xpath(targetXpath));
+            WebElement target = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(targetXpath)));
             actions.dragAndDrop(source, target).perform();
         } catch (Exception e) {
-            System.out.println("Drag and drop failed: " + e.getMessage());
+            System.err.println("Drag and drop failed (" + sourceXpath + " to " + targetXpath + "): " + e.getMessage());
         }
     }
 
-    // Frame handling
+    // Switch to frame by index, name, or xpath
     public void switchToFrame(String type, String value) {
         try {
             switch (type.toLowerCase()) {
@@ -135,16 +168,16 @@ public class BaseClass {
                     throw new IllegalArgumentException("Invalid frame switch type: " + type);
             }
         } catch (Exception e) {
-            System.out.println("Frame switch failed: " + e.getMessage());
+            System.err.println("Frame switch failed (" + type + ": " + value + "): " + e.getMessage());
         }
     }
 
-    // Switch back to main page
+    // Switch back to main document
     public void switchToDefault() {
         driver.switchTo().defaultContent();
     }
 
-    // Window handling
+    // Switch to new window different from parent
     public void switchToNewWindow() {
         try {
             String parent = driver.getWindowHandle();
@@ -156,76 +189,84 @@ public class BaseClass {
                 }
             }
         } catch (Exception e) {
-            System.out.println("Window switching failed: " + e.getMessage());
+            System.err.println("Window switching failed: " + e.getMessage());
         }
     }
 
-    // Screenshot
+    // Take screenshot and save to specified folder
     public void takeScreenshot(String fileName) {
         try {
             TakesScreenshot ts = (TakesScreenshot) driver;
             File src = ts.getScreenshotAs(OutputType.FILE);
-            FileUtils.copyFile(src, new File("src/test/screenshots/" + fileName + ".png"));
+            String dest = "src/test/screenshots/" + fileName + ".png";
+            FileUtils.copyFile(src, new File(dest));
+            System.out.println("Screenshot saved: " + dest);
         } catch (IOException e) {
-            System.out.println("Screenshot failed: " + e.getMessage());
+            System.err.println("Screenshot failed: " + e.getMessage());
         }
     }
 
-    // JS Click javascript
+    // Javascript click on element
     public void jsClick(String xpath) {
         try {
             WebElement element = driver.findElement(By.xpath(xpath));
             JavascriptExecutor js = (JavascriptExecutor) driver;
             js.executeScript("arguments[0].click();", element);
         } catch (Exception e) {
-            System.out.println("JS click failed: " + e.getMessage());
+            System.err.println("JS click failed (" + xpath + "): " + e.getMessage());
         }
     }
 
-    // Scroll to element
+    // Scroll element into view
     public void scrollToElement(String xpath) {
         try {
             WebElement element = driver.findElement(By.xpath(xpath));
             ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
         } catch (Exception e) {
-            System.out.println("Scroll failed: " + e.getMessage());
+            System.err.println("Scroll failed (" + xpath + "): " + e.getMessage());
         }
     }
 
-    // Explicit wait utility
+    // Explicit wait for visibility of element
     public void waitForVisibility(String xpath, int seconds) {
         try {
             WebDriverWait customWait = new WebDriverWait(driver, Duration.ofSeconds(seconds));
             customWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
         } catch (Exception e) {
-            System.out.println("Wait for visibility failed: " + e.getMessage());
+            System.err.println("Wait for visibility failed (" + xpath + "): " + e.getMessage());
         }
     }
 
-    // Get text
+    // Get text from element
     public String getText(String xpath) {
         try {
             return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath))).getText();
         } catch (Exception e) {
-            System.out.println("Getting text failed: " + e.getMessage());
+            System.err.println("Getting text failed (" + xpath + "): " + e.getMessage());
             return null;
         }
     }
 
-    // Close browser
-    public void closeBrowser() {
+    // Close browser session
+    public static void closeBrowser() {
         if (driver != null) {
             driver.quit();
+            System.out.println("Browser closed");
         }
     }
+
     // Get current page title
     public String getTitle() {
         try {
             return driver.getTitle();
         } catch (Exception e) {
-            System.out.println("Failed to get title: " + e.getMessage());
+            System.err.println("Failed to get title: " + e.getMessage());
             return null;
         }
+    }
+
+    public static WebDriver getDriver() {
+        return driver;
     }
 
 }

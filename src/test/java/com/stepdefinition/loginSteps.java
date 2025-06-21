@@ -1,7 +1,6 @@
 package com.stepdefinition;
 
 import Utils.ConfigReader;
-import Utils.ExcelUtilis;
 import com.Baseclass.BaseClass;
 import com.pageObjectModel.LoginPage;
 import com.pageObjectModel.SearchPage;
@@ -11,33 +10,30 @@ import io.cucumber.java.en.When;
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 
-
 public class loginSteps extends BaseClass {
 
-    WebDriver driver;
-    LoginPage loginPage;
-    SearchPage searchPage;
+    private WebDriver driver;
+    private LoginPage loginPage;
+    private SearchPage searchPage;
 
     @Given("User launches the adactin hotel booking site")
     public void user_launches_the_adactin_hotel_booking_site() {
-        String browser = ConfigReader.get("browser");
-        driver = launchBrowser(browser);
-        String url = ConfigReader.get("url");
-        openUrl(url);
+        // Use BaseClass's static driver getter
+        this.driver = BaseClass.getDriver();
 
-        searchPage = new SearchPage(driver);
+        // Initialize page objects with driver
         loginPage = new LoginPage(driver);
+        searchPage = new SearchPage(driver);
     }
 
     @When("User enters the login username {string} and password {string}")
     public void user_enters_the_login_username_and_password(String username, String password) throws Exception {
-//        String username1 = ExcelUtilis.getUserName("src/main/java/Utils/userdata.xlsx", "testdata");
-//        loginPage.enterUsername(username1);
-//        String password1 = ExcelUtilis.getPassword("src/main/java/Utils/userdata.xlsx", "testdata");
-//        loginPage.enterPassword(password1);
+        // Override parameters with values from config (optional)
+        username = ConfigReader.get("username");
+        password = ConfigReader.get("password");
 
-        loginPage.enterUsername("ajith976");   // dynamic values from feature file
-        loginPage.enterPassword("user1234");
+        loginPage.enterUsername(username);
+        loginPage.enterPassword(password);
     }
 
     @When("User clicks the login button")

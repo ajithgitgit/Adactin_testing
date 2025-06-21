@@ -1,6 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.example</groupId>
@@ -15,22 +16,33 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <cucumber.version>7.22.2</cucumber.version>
+    <selenium.version>4.21.0</selenium.version>
+    <webdrivermanager.version>5.8.0</webdrivermanager.version>
+    <commons-io.version>2.13.0</commons-io.version> <!-- Added -->
   </properties>
 
   <dependencies>
+
+    <!-- Apache Commons IO: Add explicit version to avoid conflicts -->
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons-io.version}</version>
+    </dependency>
 
     <!-- Cucumber Core -->
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-java</artifactId>
-      <version>7.22.2</version>
+      <version>${cucumber.version}</version>
     </dependency>
 
     <!-- Cucumber JUnit -->
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-junit</artifactId>
-      <version>7.22.2</version>
+      <version>${cucumber.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -46,14 +58,21 @@
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-java</artifactId>
-      <version>4.21.0</version>
+      <version>${selenium.version}</version>
     </dependency>
 
     <!-- WebDriverManager -->
     <dependency>
       <groupId>io.github.bonigarcia</groupId>
       <artifactId>webdrivermanager</artifactId>
-      <version>5.8.0</version>
+      <version>${webdrivermanager.version}</version>
+      <!-- Exclude older commons-io transitively brought by webdrivermanager -->
+      <exclusions>
+        <exclusion>
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Cucumber HTML Reporting -->
@@ -70,7 +89,8 @@
       <version>7.9.0</version>
       <scope>test</scope>
     </dependency>
-    <!-- Apache poi for excel sheet handling  -->
+
+    <!-- Apache POI for Excel -->
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-ooxml</artifactId>
@@ -93,14 +113,13 @@
         </configuration>
       </plugin>
 
-      <!-- Maven Surefire Plugin to run tests via mvn test -->
+      <!-- Maven Surefire Plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.2.5</version>
         <configuration>
           <includes>
-            <!-- This ensures only Cucumber test runners are executed -->
             <include>**/TestRunner*.java</include>
           </includes>
         </configuration>
