@@ -4,13 +4,8 @@ pipeline {
     stages {
         stage('Checkout code') {
             steps {
+                // Use default Git installation, no gitTool specified
                 git url: 'https://github.com/ajithgitgit/Adactin_testing.git', branch: 'Update_frame'
-            }
-        }
-
-        stage('Check Maven version') {
-            steps {
-                sh 'mvn -version'
             }
         }
 
@@ -21,7 +16,7 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+        stage('Test') {
             steps {
                 echo 'Running tests'
                 sh 'mvn test'
@@ -31,7 +26,6 @@ pipeline {
 
     post {
         always {
-            echo 'Publishing test reports'
             junit '**/target/surefire-reports/*.xml'
         }
     }
