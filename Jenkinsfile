@@ -8,14 +8,20 @@ pipeline {
             }
         }
 
-        stage('building') {
+        stage('Check Maven version') {
+            steps {
+                sh 'mvn -version'
+            }
+        }
+
+        stage('Building') {
             steps {
                 echo 'Building the maven project'
                 sh 'mvn clean compile'
             }
         }
 
-        stage('test') {
+        stage('Run Tests') {
             steps {
                 echo 'Running tests'
                 sh 'mvn test'
@@ -25,6 +31,7 @@ pipeline {
 
     post {
         always {
+            echo 'Publishing test reports'
             junit '**/target/surefire-reports/*.xml'
         }
     }
