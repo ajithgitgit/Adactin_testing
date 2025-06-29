@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'maven:3.9.3-openjdk-17-slim'  // Official Maven + OpenJDK 17 image
+            args '-v $HOME/.m2:/root/.m2'         // Cache Maven repo for faster builds
+        }
+    }
 
     stages {
         stage('Checkout code') {
@@ -9,16 +14,16 @@ pipeline {
             }
         }
 
-        stage('Building') {
+        stage('Build') {
             steps {
-                echo 'Building the Maven project...'
+                echo 'Building the Maven project inside Docker...'
                 sh 'mvn clean compile'
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Running Maven tests...'
+                echo 'Running tests inside Docker...'
                 sh 'mvn test'
             }
         }
@@ -30,6 +35,9 @@ pipeline {
             junit '**/target/surefire-reports/*.xml'
             archiveArtifacts artifacts: 'target/surefire-reports/*.xml', allowEmptyArchive: true
             cleanWs()
+        }
+        failure {
+            echo 'Build or tests failed!'
         }
     }
 }
