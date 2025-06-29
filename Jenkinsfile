@@ -4,21 +4,21 @@ pipeline {
     stages {
         stage('Checkout code') {
             steps {
-                // Use default Git installation, no gitTool specified
+                echo 'Checking out source code from GitHub...'
                 git url: 'https://github.com/ajithgitgit/Adactin_testing.git', branch: 'Update_frame'
             }
         }
 
         stage('Building') {
             steps {
-                echo 'Building the maven project'
+                echo 'Building the Maven project...'
                 sh 'mvn clean compile'
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Running tests'
+                echo 'Running Maven tests...'
                 sh 'mvn test'
             }
         }
@@ -26,7 +26,10 @@ pipeline {
 
     post {
         always {
+            echo 'Publishing JUnit test results...'
             junit '**/target/surefire-reports/*.xml'
+            archiveArtifacts artifacts: 'target/surefire-reports/*.xml', allowEmptyArchive: true
+            cleanWs()
         }
     }
 }
